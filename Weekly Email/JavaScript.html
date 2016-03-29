@@ -1,0 +1,163 @@
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"
+integrity="sha512-K1qjQ+NcF2TYO/eI3M6v8EiNYZfA95pQumfvcVrTHtwQVDG+aHRqLi/ETn2uB+1JqwYqVG3LIvdm9lj6imS/pQ==" crossorigin="anonymous"></script>
+<script>
+  var triggers;
+
+  function report(){
+    change_view('#report-view', '#report-nav');
+  }
+
+  function triggers(){
+    change_view('#triggers-view', '#triggers-nav');
+  }
+
+  function change_view(id, nav){
+    var views = ['#report-view', '#triggers-view'];
+    var navs = ['#report-nav', '#triggers-nav'];
+
+    var index = views.indexOf(id);
+
+    if(index > -1){
+      views = views.splice(index-1, 1);
+      navs = navs.splice(index-1, 1);
+    }
+
+    for(var i=0 ; i<views.length ; i++){
+      $(views[i]).css("display", "none");
+      $(navs[i]).attr("class", "");
+    }
+    $(id).css("display", "block");
+    $(nav).attr("class", "active");
+  }
+
+  /**
+   * Run initializations on web app load.
+   */
+  $(function() {
+
+    $('#submit').click(submitClick);
+    $('#auth-button').click(authButton);
+
+    $('#report-nav').click(report);
+    $('#triggers-nav').click(triggers);
+
+    $('#triggers-button').click(getTriggersButton);
+    getTriggersButton();
+
+    $('#test-button').click(function(){
+      $("#test-result").html("");
+      google.script.run.withSuccessHandler(function(contents){
+         $("#test-result").html(contents);
+      }).task_manager();
+    });
+
+  });
+
+function remove_trigger_button(e){
+  var index = e.target.id;
+  var item = triggers[index];
+  google.script.run
+  .withSuccessHandler(function(e){
+     console.log("success");
+     getTriggersButton();
+  }).withFailureHandler(function(e){
+     console.log("fail");
+  }).remove_trigger(item.cell);
+}
+
+function edit_trigger_button(e){
+  var index = e.target.id;
+  var item = triggers[index];
+
+  console.log(e);
+}
+
+function getTriggersButton(){
+
+  $("#triggers-table").empty();
+  google.script.run
+  .withSuccessHandler(function(contents){
+    var str = "";
+    var item;
+    triggers = contents;
+    if(contents === 'undefined')
+      return;
+    for(var i = 0 ; i<contents.length ; i++){
+      item = contents[i];
+      str += "<tr>"+
+              "<td>"+i+"</td>"+
+              "<td><a href='"+item.url+"'><strong>"+item.name+"</strong></a></td>"+
+              "<td>"+item.email+"</td>"+
+              "<td>"+item.day+"</td>"+
+              "<td>"+item.type+"</td>"+
+              "<td>"+
+                "<button id='"+i+"' class='remove-trigger btn create'><span id='"+i+"' class='glyphicon glyphicon-remove'></span></button>"+
+                "<button id='"+i+"' data-toggle='modal' data-target='#trigger-edit-model' class='edit-trigger btn action'>Edit</button>"+
+              "</td>"+
+            "</tr>";
+    }
+
+    $("#triggers-table").html(str);
+
+    $('.remove-trigger').click(remove_trigger_button);
+    $('.edit-trigger').click(edit_trigger_button);
+
+  })
+  .withFailureHandler(function(msg){
+    $("#triggers-table").html("Failure: "+msg);
+  })
+  .get_triggers()
+
+}
+
+function authButton(){
+  $('#auth-link').html('');
+  google.script.run
+  .withSuccessHandler(function(contents){
+    if(contents === "You already has access!!"){
+      $('#auth-link').html(contents);
+    }else{
+      $('#auth-link').html('<a href="' + contents + '" target="_blank">Click To Authorize</a>. ' +
+      'You can use the app when the authorization is complete.');
+    }
+
+  })
+  .withFailureHandler(function(msg){
+    $('#auth-status').html('Failed: '+msg);
+  })
+  .auth();
+
+}
+
+function submitClick(){
+  $('#status').html('');
+  var email = $("#email").val();
+  var link = $("#link").val();
+  var weekday = $("#weekday-select").val();
+
+
+  if($("#sheets-radio")[0].checked){
+    //sheets
+    google.script.run
+    .withSuccessHandler(function(contents) {
+       $('#status').html('Success');
+    })
+    .withFailureHandler(function(msg) {
+       $('#status').html('Failure: '+msg);
+    })
+    .add_trigger(email, link, weekday, "sheet");
+  }else{
+    //slides
+    google.script.run
+    .withSuccessHandler(function(contents) {
+       $('#status').html('Success');
+    })
+    .withFailureHandler(function(msg) {
+       $('#status').html('Failure: '+msg);
+    })
+    .add_trigger(email, link, weekday, "slide");
+  }
+}
+
+</script>

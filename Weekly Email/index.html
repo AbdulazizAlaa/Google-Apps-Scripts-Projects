@@ -1,0 +1,168 @@
+<!-- Use a templated HTML printing scriptlet to import common stylesheet. -->
+<?!= HtmlService.createHtmlOutputFromFile('Stylesheet').getContent(); ?>
+<html>
+  <body>
+
+    <nav class="navbar navbar-default">
+      <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#home-navbar" aria-expanded="false">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand">Reports</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="home-navbar">
+           <ul class="nav navbar-nav">
+             <li role="presentation" id="report-nav" class="active"><a >Home</a></li>
+             <li role="presentation" id="triggers-nav" ><a >Triggers</a></li>
+           </ul>
+
+           <ul class="nav navbar-nav navbar-right">
+               <li><a id="test-button" style="color:red;"><strong>Test Todays Triggers</strong></a> </li>
+           </ul>
+
+        </div><!-- /.navbar-collapse -->
+       </div><!-- /.container-fluid -->
+     </nav>
+
+    <div class="container">
+      <div id="report-view" class="panel panel-default">
+        <!-- Default panel contents -->
+        <div class="panel-heading"><strong>Report</strong></div>
+        <div class="panel-body">
+          <div class="block">
+            <label for="email">Email address</label>
+            <input type="email" class="form-control" id="email" placeholder="Email">
+          </div>
+          <div class="block">
+            <label for="link">Sheet/slide Link</label>
+            <input type="text" class="form-control" id="link" placeholder="Link">
+          </div>
+
+          <div class="block">
+            <input type="radio" name="radio-a" id="sheets-radio" checked>
+            <label for="sheets-radio">Sheets</label>
+
+            <input type="radio" name="radio-a" id="slides-radio">
+            <label for="slides-radio">Slides</label>
+          </div>
+
+          <div class="block form-group">
+            <label for="select">Weekday</label>
+            <select id="weekday-select" style="padding:5px;">
+              <option value="sat" selected>Saturday</option>
+              <option value="sun">Sunday</option>
+              <option value="mon">Monday</option>
+              <option value="tue">Tuesday</option>
+              <option value="wed">Wednesday</option>
+              <option value="thr">Thursday</option>
+              <option value="fri">Friday</option>
+            </select>
+          </div>
+
+          <div class="block">
+            <button class="action" id="submit" >Submit</button>
+          </div>
+
+          <div class="block" id="status">....</div>
+          <div class="block">
+            <button class="create" id="auth-button" >Authorize</button>
+          </div>
+          <div class="block" id="auth-link"></div>
+        </div>
+      </div>
+
+      <div style="display: none;" id="triggers-view" class="panel panel-default">
+        <!-- Default panel contents -->
+        <div class="panel-heading">
+          <strong>Triggers</strong>
+          <button id="triggers-button" class="btn action pull-right"><span class="glyphicon glyphicon-refresh" aria-hidden="true"></span></button>
+        </div>
+        <!-- Table -->
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th><strong>#</strong></th>
+              <th><strong>File Name</strong></th>
+              <th><strong>Email</strong></th>
+              <th><strong>Weekday</strong></th>
+              <th><strong>type</strong></th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="triggers-table">
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+
+<!-- Modal -->
+<div class="modal fade" id="trigger-edit-model" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">Edit</h4>
+      </div>
+      <div class="modal-body">
+        <strong>!!!!!!!!!Not implemented Yet.!!!!!!!!!</strong>
+
+        <br><br>
+          <div class="block">
+            <label for="email">Email address</label>
+            <input type="email" class="form-control" id="edit-email" placeholder="Email">
+          </div>
+          <div class="block">
+            <label for="link">Sheet/slide Link</label>
+            <input type="text" class="form-control" id="edit-link" placeholder="Link">
+          </div>
+
+          <div class="block">
+            <input type="radio" name="radio-a" id="edit-sheets-radio" checked>
+            <label for="sheets-radio">Sheets</label>
+
+            <input type="radio" name="radio-a" id="edit-slides-radio">
+            <label for="slides-radio">Slides</label>
+          </div>
+
+          <div class="block form-group">
+            <label for="select">Weekday</label>
+            <select id="edit-weekday-select" style="padding:5px;">
+              <option value="sat" selected>Saturday</option>
+              <option value="sun">Sunday</option>
+              <option value="mon">Monday</option>
+              <option value="tue">Tuesday</option>
+              <option value="wed">Wednesday</option>
+              <option value="thr">Thursday</option>
+              <option value="fri">Friday</option>
+            </select>
+          </div>
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="button" id="edit-submit" class="btn action">Save changes</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+  </body>
+</html>
+
+<!-- Store data passed to template here, so it is available to the
+     imported JavaScript. -->
+<script>
+  var folderId = <?= folderId ?>;
+</script>
+
+<!-- Use a templated HTML printing scriptlet to import JavaScript. -->
+<?!= HtmlService.createHtmlOutputFromFile('JavaScript').getContent(); ?>

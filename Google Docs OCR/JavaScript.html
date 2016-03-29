@@ -1,0 +1,93 @@
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script>
+  /**
+   * Run initializations on web app load.
+   */
+  $(function() {
+    // Call the server here to retrieve any information needed to build the page.
+    $("#empty-property-button").click(function(){
+       console.log("start emptying property");
+       folder = $("#link-input")[0].value;
+       google.script.run
+       .withSuccessHandler(function(contents) {
+         // Respond to success conditions here.
+         console.log("empty Property:", contents);
+       })
+       .withFailureHandler(function(msg) {
+         // Respond to failure conditions here.
+         console.log("Error: ", msg);
+         $('#content').text(msg);
+       }).empty_properties(folder);
+    });
+
+   $("#rename-files-button").click(function(){
+       console.log("start renaming Files");
+       folder = $("#link-input")[0].value;
+       google.script.run
+       .withSuccessHandler(function(contents) {
+         // Respond to success conditions here.
+         console.log("rename:", contents);
+       })
+       .withFailureHandler(function(msg) {
+         // Respond to failure conditions here.
+         console.log("Error: ", msg);
+         $('#content').text(msg);
+       }).rename_files(folder);
+    });
+
+    $("#copy-files-button").click(function(){
+       console.log("start Copying Files");
+       folder = $("#link-input")[0].value;
+       google.script.run
+       .withSuccessHandler(function(contents) {
+         // Respond to success conditions here.
+         console.log("copy:", contents);
+       })
+       .withFailureHandler(function(msg) {
+         // Respond to failure conditions here.
+         console.log("Error: ", msg);
+         $('#content').text(msg);
+       }).make_a_copy("temp", folder);
+    });
+
+    $("#get-content-button").click(function(){
+       console.log("start getting content");
+        folder = $("#link-input")[0].value;
+        google.script.run
+        .withSuccessHandler(function(contents) {
+        // Respond to success conditions here.
+             console.log("ids:", contents);
+             doOCRRepeat(contents, contents.length-1, contents.length);
+        })
+        .withFailureHandler(function(msg) {
+        // Respond to failure conditions here.
+           console.log("Error:: ", msg);
+           $('#content').text(msg);
+        }).getfoldernames(folder);
+    });
+  });
+
+
+function doOCRRepeat(id, i, length){
+     console.log(id[i],i);
+     console.log(isNaN(id[i]));
+     if(!isNaN(id[i])){
+         console.log("wrong id");
+         doOCRRepeat(id, i-1, length);
+     }else{
+        google.script.run
+        .withSuccessHandler(function(contents){
+           console.log("OCR: ", contents);
+
+           if(contents.i>=0)
+              doOCRRepeat(contents.id, contents.i, contents.length);
+           else{
+
+           }
+        }).withFailureHandler(function(msg){
+           console.log("ERROR: ", msg);
+        }).doOCR(id, i, length);
+
+     }
+}
+</script>

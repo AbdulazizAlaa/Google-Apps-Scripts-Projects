@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+    <!-- Use a templated HTML printing scriptlet to import common stylesheet -->
+    <?!= HtmlService.createHtmlOutputFromFile('Stylesheet').getContent(); ?>
+  </head>
+  <body>
+  link: <input type="text" name="link" id="link-input"><br>
+  <button type="button" id="get-content-button">Get Content!</button>
+  <button type="button" id="copy-files-button">Copy Files!</button>
+  <button type="button" id="rename-files-button">rename Files!</button>
+  <button type="button" id="empty-property-button">empty Property!</button>
+
+  <div id="content"></div>
+
+    <!-- Use a templated HTML printing scriptlet to import JavaScript. -->
+    <?!= HtmlService.createHtmlOutputFromFile('JavaScript').getContent(); ?>
+  </body>
+</html>
